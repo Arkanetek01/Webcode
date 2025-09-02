@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="CrypteX — Fast, secure crypto exchange." />
+  <title>CrypteX — Landing</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <!-- GSAP + ScrollTrigger + Particles.js (CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+  <!-- Styles (readable, not minified) -->
+  <style>
+    /* ========== Variables & Base ========== */
+    :root{
+      --accent:#6366f1;
+      --bg:#050507;
+      --panel:#0f1115;
+      --muted:#9aa0c6;
+      --glass: rgba(3,3,4,0.64);
+      --content-max: 1400px;
+    }
+
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background:var(--bg);
+      color:#fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+    }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;height:auto;display:block}
+
+    /* ========== Layout helpers ========== */
+    .container{
+      max-width:var(--content-max);
+      margin:0 auto;
+      padding-left:20px;
+      padding-right:20px;
+      box-sizing:border-box;
+    }
+
+    header{
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      z-index:120;
+      background:var(--glass);
+      backdrop-filter:blur(6px);
+      border-bottom:1px solid rgba(255,255,255,0.04);
+      transition:padding 220ms ease, box-shadow 220ms ease, background 220ms ease;
+    }
+
+    /* smaller header when scrolled */
+    header.scrolled{
+      padding-top:6px;
+      padding-bottom:6px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.45);
+      background:rgba(3,3,4,0.78);
+    }
+
+    .nav-inner{
+      height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .brand{
+      font-weight:800;
+      color:var(--accent);
+      font-size:18px;
+      letter-spacing:0.2px;
+    }
+
+    /* Desktop nav */
+    .nav-links{
+      display:none;
+      gap:28px;
+      align-items:center;
+    }
+
+    .nav-links a:hover{color:rgba(99,102,241,0.95)}
+    .cta-small{
+      padding:8px 14px;
+      border-radius:14px;
+      background:var(--accent);
+      font-weight:600;
+    }
+
+    .menu-btn{
+      font-size:22px;
+      background:transparent;
+      border:0;
+      color:inherit;
+      cursor:pointer;
+    }
+
+    /* Mobile menu container (3D flip) */
+    .mobile-menu{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      background:#06060a;
+      border-top:1px solid rgba(255,255,255,0.04);
+      overflow:hidden;
+      transform-style:preserve-3d;
+    }
+
+    /* ========== HERO ========== */
+    #hero{
+      position:relative;
+      min-height:78vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:120px 20px 64px; /* account for header */
+      overflow:hidden;
+    }
+
+    /* particles layer: must fill hero and sit at lowest z */
+    #particles-js{
+      position:absolute;
+      inset:0;
+      z-index:0;
+    }
+
+    /* grid pattern sits above particles */
+    .grid-pattern{
+      position:absolute;
+      inset:0;
+      z-index:1;
+      opacity:0.06;
+      pointer-events:none;
+      transform-origin:center;
+    }
+
+    /* gradient overlay (above pattern) */
+    .hero-overlay{
+      position:absolute;
+      inset:0;
+      z-index:2;
+      background:linear-gradient(180deg, rgba(0,0,0,0.72), rgba(0,0,0,0.35));
+    }
+
+    /* hero content above everything */
+    .hero-content{
+      position:relative;
+      z-index:10;
+      text-align:center;
+      max-width:1100px;
+      margin:0 auto;
+    }
+
+    /* Fluid, clamp-based typography */
+    .hero-heading{
+      margin:0;
+      font-weight:800;
+      line-height:1.02;
+      font-size:clamp(1.9rem, 2.6vw + 1.0rem, 4.25rem); /* min, fluid, max */
+    }
+
+    .hero-sub{
+      color:#bfc7e6;
+      margin-top:12px;
+      font-size:clamp(0.95rem, 1.1vw + 0.6rem, 1.125rem);
+      max-width:56ch;
+      margin-left:auto;margin-right:auto;
+    }
+
+    .hero-cta{
+      margin-top:20px;
+      display:inline-flex;
+      gap:12px;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .btn-primary{
+      padding:10px 14px;
+      border-radius:12px;
+      background:var(--accent);
+      font-weight:700;
+      font-size:0.95rem;
+    }
+
+    .btn-ghost{
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.06);
+      font-size:0.95rem;
+    }
+
+    /* ========== Sections ========== */
+    section{padding:48px 0}
+    .section-title{text-align:center;margin-bottom:20px;font-size:clamp(1.1rem, 1.2vw + .6rem, 1.6rem)}
+
+    /* Features grid mobile-first */
+    .features-grid{display:grid;grid-template-columns:1fr;gap:18px;max-width:1100px;margin:0 auto;padding:0 20px}
+    @media(min-width:640px){ .features-grid{grid-template-columns:repeat(2,1fr)} }
+    @media(min-width:1024px){ .features-grid{grid-template-columns:repeat(3,1fr)} }
+
+    .card{background:var(--panel);padding:20px;border-radius:14px;min-height:220px;display:flex;flex-direction:column;justify-content:flex-start}
+    .card h3{margin:0 0 8px 0}
+    .card p{color:var(--muted);margin:0}
+
+    /* ========== Tickers ========== */
+    .ticker-container{overflow:hidden;white-space:nowrap}
+    .ticker-track{display:inline-flex;gap:18px;align-items:center}
+    .ticker-item{display:inline-flex;align-items:center;background:var(--panel);padding:10px 14px;border-radius:10px;font-weight:600;color:#dbe1ff;white-space:nowrap}
+
+    /* ========== Partners ========== */
+    #partners{background:#07070b;border-top:1px solid rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.03);padding-top:28px;padding-bottom:28px}
+    .partner-wrapper{max-width:1100px;margin:0 auto;padding:0 20px}
+    .partner-item{display:inline-flex;align-items:center;justify-content:center;padding:.5rem 1rem;cursor:default;color:rgba(255,255,255,0.92);transition:color .28s ease}
+    .partner-svg{width:130px;height:44px;display:block;filter:grayscale(100%) contrast(.95);transition:filter .32s ease,transform .25s ease}
+    .partner-item:hover .partner-svg{filter:none;transform:scale(1.08)}
+    @media(min-width:1400px){ .partner-svg{width:160px;height:56px} }
+    @media(max-width:420px){ .partner-svg{width:100px;height:36px} }
+
+    /* ========== Footer ========== */
+    footer{padding:28px 20px;text-align:center;background:#030304;color:#9aa0c6;font-size:14px}
+
+    /* ========== Accessibility ========== */
+    a:focus{outline:2px solid rgba(99,102,241,0.22);outline-offset:3px;border-radius:8px}
+    @media (prefers-reduced-motion: reduce) { *{animation:none!important;transition:none!important} }
+
+    /* ========== Desktop / ultra-wide tweaks ========= */
+    @media (min-width:1200px){
+      .container{padding-left:28px;padding-right:28px}
+      .hero-content{max-width:1000px}
+    }
+
+    @media (min-width:1400px){
+      :root{--content-max:1600px}
+      .container{padding-left:40px;padding-right:40px}
+      .hero-content{max-width:1200px}
+    }
+
+    @media (min-width:1600px){
+      .features-grid{gap:28px}
+      .card{padding:28px;border-radius:16px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER: sticky at top -->
+  <header id="site-header" role="banner" aria-label="Main header">
+    <div class="container nav-inner">
+      <a class="brand" href="#hero">CrypteX</a>
+
+      <!-- Desktop nav (hidden on small screens) -->
+      <nav id="desktopNav" class="nav-links" aria-label="Primary navigation">
+        <a href="#hero">Home</a>
+        <a href="#features">Features</a>
+        <a href="#market">Market</a>
+        <a href="#partners">Partners</a>
+        <a href="#about">About</a>
+        <a class="cta-small" href="#contact">Sign Up</a>
+      </nav>
+
+      <!-- Mobile hamburger -->
+      <button id="menu-btn" class="menu-btn" aria-expanded="false" aria-controls="mobile-menu">☰</button>
+    </div>
+
+    <!-- Mobile menu (3D flip container) -->
+    <div id="mobile-menu" class="mobile-menu" aria-hidden="true">
+      <a href="#hero">Home</a>
+      <a href="#features">Features</a>
+      <a href="#market">Market</a>
+      <a href="#partners">Partners</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="#" style="color:var(--accent);font-weight:700;padding:12px 0">Sign Up</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section id="hero" aria-label="Hero section">
+      <!-- particles canvas -->
+      <div id="particles-js" aria-hidden="true"></div>
+
+      <!-- inline grid pattern -->
+      <svg class="grid-pattern" viewBox="0 0 800 600" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <pattern id="gridP" width="36" height="36" patternUnits="userSpaceOnUse">
+            <path d="M36 0 L0 0 0 36" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#gridP)"/>
+      </svg>
+
+      <!-- overlay -->
+      <div class="hero-overlay" aria-hidden="true"></div>
+
+      <!-- content -->
+      <div class="hero-content container">
+        <h1 class="hero-heading">Trade Crypto Smarter with <span style="color:var(--accent)">CrypteX</span></h1>
+        <p class="hero-sub">Buy, sell and trade Bitcoin, Ethereum and 100+ assets with high performance and enterprise-grade security.</p>
+
+        <div class="hero-cta">
+          <a class="btn-primary" href="#contact" role="button">Create Account</a>
+          <a class="btn-ghost" href="#features" role="button">Learn More</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features">
+      <h2 class="section-title">Why Choose CrypteX?</h2>
+      <div class="features-grid">
+        <div class="card feature-card">
+          <h3>🔒 Enterprise Security</h3>
+          <p>Cold storage, multi-sig and compliance-first practices that protect user funds.</p>
+        </div>
+
+        <div class="card feature-card">
+          <h3>⚡ Ultra-Fast Matching</h3>
+          <p>Low-latency engine and deep liquidity for professional traders.</p>
+        </div>
+
+        <div class="card feature-card">
+          <h3>📈 Low Fees</h3>
+          <p>Competitive fees and transparent pricing to maximize trader returns.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARTNERS (trusted by) -->
+    <section id="partners" aria-label="Trusted by leading platforms">
+      <h2 class="section-title">Trusted by Leading Platforms</h2>
+
+      <div class="partner-wrapper">
+        <div class="ticker-container" aria-hidden="false">
+          <div id="partners-track" class="ticker-track" role="list">
+            <!-- Inline accessible SVG logos (placeholders). Replace inner paths with official logo shapes if you want exact art. -->
+            <div class="partner-item" role="listitem" data-brand="binance" data-color="#F3BA2F" aria-label="Binance">
+              <svg class="partner-svg" viewBox="0 0 48 48" role="img" aria-labelledby="title-binance"><title id="title-binance">Binance</title>
+                <rect width="48" height="48" fill="transparent"></rect>
+                <g fill="currentColor"><path d="M24 9.6L30.4 14 24 18.4 17.6 14 24 9.6zM24 29.6L30.4 34 24 38.4 17.6 34 24 29.6zM9.6 24L14 17.6 18.4 24 14 30.4 9.6 24zM38.4 24L34 17.6 29.6 24 34 30.4 38.4 24z"/></g>
+              </svg>
+            </div>
+
+            <div class="partner-item" role="listitem" data-brand="coinbase" data-color="#2A5ADA" aria-label="Coinbase">
+              <svg class="partner-svg" viewBox="0 0 48 48" role="img" aria-labelledby="title-coinbase"><title id="title-coinbase">Coinbase</title>
+                <rect width="48" height="48" fill="transparent"></rect>
+                <circle cx="24" cy="24" r="9.6" fill="currentColor"></circle>
+              </svg>
+            </div>
+
+            <div class="partner-item" role="listitem" data-brand="kraken" data-color="#1B1F23" aria-label="Kraken">
+              <svg class="partner-svg" viewBox="0 0 48 48" role="img" aria-labelledby="title-kraken"><title id="title-kraken">Kraken</title>
+                <rect width="48" height="48" fill="transparent"></rect>
+                <path d="M12 34c6-4 18-4 24 0v-8c-6-4-18-4-24 0v8z" fill="currentColor"></path>
+              </svg>
+            </div>
+
+            <div class="partner-item" role="listitem" data-brand="gemini" data-color="#00A6FF" aria-label="Gemini">
+              <svg class="partner-svg" viewBox="0 0 48 48" role="img" aria-labelledby="title-gemini"><title id="title-gemini">Gemini</title>
+                <rect width="48" height="48" fill="transparent"></rect>
+                <path fill="currentColor" d="M24 9c6 0 11 4.9 11 11s-5 11-11 11-11-4.9-11-11S18 9 24 9z"></path>
+              </svg>
+            </div>
+
+            <div class="partner-item" role="listitem" data-brand="bitfinex" data-color="#2BB24C" aria-label="Bitfinex">
+              <svg class="partner-svg" viewBox="0 0 48 48" role="img" aria-labelledby="title-bitfinex"><title id="title-bitfinex">Bitfinex</title>
+                <rect width="48" height="48" fill="transparent"></rect>
+                <path d="M12 30c8-10 24-10 28 0-12-4-20-3-28 0z" fill="currentColor"></path>
+              </svg>
+            </div>
+
+            <div class="partner-item" role="listitem" data-brand="etoro" data-color="#1DB954" aria-label="eToro">
+              <svg class="partner-svg" viewBox="0 0 48 48" role="img" aria-labelledby="title-etoro"><title id="title-etoro">eToro</title>
+                <rect width="48" height="48" fill="transparent"></rect>
+                <path fill="currentColor" d="M12 34h24v4H12zM16 22h16v4H16zM20 10h8v4h-8z"></path>
+              </svg>
+            </div>
+
+            <div class="partner-item" role="listitem" data-brand="okx" data-color="#000000" aria-label="OKX">
+              <svg class="partner-svg" viewBox="0 0 48 48" role="img" aria-labelledby="title-okx"><title id="title-okx">OKX</title>
+                <rect width="48" height="48" fill="transparent"></rect>
+                <circle cx="18" cy="18" r="6" fill="currentColor"></circle>
+                <rect x="28" y="12" width="8" height="12" fill="currentColor"></rect>
+              </svg>
+            </div>
+
+            <div class="partner-item" role="listitem" data-brand="huobi" data-color="#00A6FF" aria-label="Huobi">
+              <svg class="partner-svg" viewBox="0 0 48 48" role="img" aria-labelledby="title-huobi"><title id="title-huobi">Huobi</title>
+                <rect width="48" height="48" fill="transparent"></rect>
+                <path fill="currentColor" d="M24 8c6 6 8 18 0 24-8-6-6-18 0-24z"></path>
+              </svg>
+            </div>
+
+            <div class="partner-item" role="listitem" data-brand="robinhood" data-color="#00C805" aria-label="Robinhood">
+              <svg class="partner-svg" viewBox="0 0 48 48" role="img" aria-labelledby="title-robinhood"><title id="title-robinhood">Robinhood</title>
+                <rect width="48" height="48" fill="transparent"></rect>
+                <path fill="currentColor" d="M12 32c6-12 24-12 28 0-12-6-24-6-28 0z"></path>
+              </svg>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MARKET (fast ticker) -->
+    <section id="market">
+      <h2 class="section-title">Live Market Snapshot</h2>
+      <div class="container" style="padding:0 20px;">
+        <div id="market-wrap" class="ticker-container" aria-hidden="false">
+          <div id="market-track" class="ticker-track" role="list">
+            <div class="ticker-item" role="listitem">BTC $28,420 <span style="color:#6EE7B7;margin-left:8px">+2.3%</span></div>
+            <div class="ticker-item" role="listitem">ETH $1,720 <span style="color:#6EE7B7;margin-left:8px">+1.8%</span></div>
+            <div class="ticker-item" role="listitem">SOL $24.3 <span style="color:#FB7185;margin-left:8px">-0.7%</span></div>
+            <div class="ticker-item" role="listitem">ADA $0.36 <span style="color:#6EE7B7;margin-left:8px">+3.1%</span></div>
+            <div class="ticker-item" role="listitem">XRP $0.52 <span style="color:#FB7185;margin-left:8px">-0.9%</span></div>
+            <div class="ticker-item" role="listitem">DOGE $0.074 <span style="color:#6EE7B7;margin-left:8px">+4.5%</span></div>
+            <div class="ticker-item" role="listitem">BNB $310 <span style="color:#6EE7B7;margin-left:8px">+1.2%</span></div>
+            <div class="ticker-item" role="listitem">MATIC $0.85 <span style="color:#FB7185;margin-left:8px">-2.0%</span></div>
+            <div class="ticker-item" role="listitem">DOT $5.20 <span style="color:#6EE7B7;margin-left:8px">+0.6%</span></div>
+            <div class="ticker-item" role="listitem">LTC $72.10 <span style="color:#6EE7B7;margin-left:8px">+1.4%</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="about">
+      <h2 class="section-title">Trusted by traders worldwide</h2>
+      <div class="container" style="max-width:980px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:16px;padding:0 20px;">
+        <div class="card">“CrypteX has changed how I trade — fast, secure and dependable.”<div style="margin-top:8px;font-weight:700">— Sarah L.</div></div>
+        <div class="card">“Low fees and a polished experience.”<div style="margin-top:8px;font-weight:700">— David M.</div></div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="contact" style="background:linear-gradient(180deg,var(--accent),#3b3a8f);text-align:center;padding:40px 20px">
+      <div class="container">
+        <h2 style="margin:0 0 10px">Ready to start trading?</h2>
+        <p style="margin:0 0 16px;color:rgba(255,255,255,.92)">Create your account and start trading in minutes.</p>
+        <a class="btn-primary" href="#" style="font-size:15px;padding:10px 16px">Create account</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>© 2025 CrypteX — All rights reserved.</footer>
+
+  <!-- Scripts (readable) -->
+  <script>
+    // register plugin
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ---------- Particles.js inline config ----------
+    // subtle, interactive (repulse on hover), reacts to touch on mobile
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 100, density: { enable: true, value_area: 900 } },
+        color: { value: '#b9c0ff' },
+        shape: { type: 'circle' },
+        opacity: { value: 0.08, random: true },
+        size: { value: 3, random: true },
+        line_linked: { enable: false },
+        move: { enable: true, speed: 0.6, random: true, out_mode: 'out' }
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: {
+          onhover: { enable: true, mode: 'repulse' },
+          onclick: { enable: false },
+          resize: true
+        },
+        modes: { repulse: { distance: 120, duration: 0.6 } }
+      },
+      retina_detect: true
+    });
+
+    // ---------- SVG grid zoom on scroll ----------
+    gsap.fromTo('.grid-pattern', { scale: 1 }, {
+      scale: 1.18,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
+
+    // ---------- Hero entrance animations ----------
+    gsap.from('.hero-heading', { y: 56, opacity: 0, duration: 1.05, ease: 'power4.out' });
+    gsap.from('.hero-sub', { y: 28, opacity: 0, duration: 0.9, delay: 0.2, ease: 'power3.out' });
+    gsap.from('.hero-cta a', { y: 18, opacity: 0, duration: 0.8, delay: 0.45, stagger: 0.12 });
+
+    // ---------- Mobile menu (3D flip) ----------
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    let menuOpen = false;
+
+    gsap.set(mobileMenu, { height: 0, opacity: 0, rotateX: -90, display: 'none', transformOrigin: 'top center' });
+
+    function openMenu(){
+      menuBtn.textContent = '✕';
+      gsap.set(mobileMenu, { display: 'flex' });
+      gsap.to(mobileMenu, { height: 'auto', opacity: 1, rotateX: 0, duration: 0.45, ease: 'back.out(1.4)' });
+      menuBtn.setAttribute('aria-expanded','true');
+      mobileMenu.setAttribute('aria-hidden','false');
+      menuOpen = true;
+    }
+
+    function closeMenu(){
+      menuBtn.textContent = '☰';
+      gsap.to(mobileMenu, { height: 0, opacity: 0, rotateX: -90, duration: 0.35, ease: 'power2.in', onComplete: ()=>gsap.set(mobileMenu, { display: 'none' }) });
+      menuBtn.setAttribute('aria-expanded','false');
+      mobileMenu.setAttribute('aria-hidden','true');
+      menuOpen = false;
+    }
+
+    menuBtn.addEventListener('click', ()=> menuOpen ? closeMenu() : openMenu());
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+    // ---------- Feature cards fade on scroll ----------
+    gsap.utils.toArray('.feature-card').forEach(el => {
+      gsap.from(el, {
+        scrollTrigger: { trigger: el, start: 'top 85%' },
+        y: 26,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power3.out'
+      });
+    });
+
+    // ---------- Market ticker (fast, left) ----------
+    const marketTrack = document.getElementById('market-track');
+    // duplicate content for continuous seamless scroll
+    marketTrack.innerHTML += marketTrack.innerHTML;
+
+    const marketTween = gsap.to(marketTrack, {
+      xPercent: -50,
+      duration: 22,
+      ease: 'linear',
+      repeat: -1
+    });
+
+    const marketWrap = document.getElementById('market-wrap');
+    marketWrap.addEventListener('mouseenter', ()=> marketTween.pause());
+    marketWrap.addEventListener('mouseleave', ()=> marketTween.play());
+
+    // ---------- Partners ticker (slower, alternating direction) ----------
+    const partnersTrack = document.getElementById('partners-track');
+    partnersTrack.innerHTML += partnersTrack.innerHTML; // duplicate for smoothness
+
+    const partnersTween = gsap.to(partnersTrack, {
+      xPercent: -50,
+      duration: 40, // slower than market
+      ease: 'linear',
+      repeat: -1,
+      yoyo: true // alternate directions continuously
+    });
+
+    partnersTrack.parentElement.addEventListener('mouseenter', ()=> partnersTween.pause());
+    partnersTrack.parentElement.addEventListener('mouseleave', ()=> partnersTween.play());
+
+    // fade-in partners items to simulate lazy appearance
+    gsap.from('#partners .partner-item', {
+      scrollTrigger: { trigger: '#partners', start: 'top 85%' },
+      y: 14,
+      opacity: 0,
+      duration: 0.9,
+      stagger: 0.08
+    });
+
+    // ---------- color-on-hover for inline SVGs ----------
+    document.querySelectorAll('.partner-item').forEach(item => {
+      const brandColor = item.getAttribute('data-color') || '#fff';
+      // initial (near white) color so currentColor fills are visible in grayscale
+      item.style.color = 'rgba(255,255,255,0.92)';
+      item.addEventListener('mouseenter', ()=> item.style.color = brandColor);
+      item.addEventListener('mouseleave', ()=> item.style.color = 'rgba(255,255,255,0.92)');
+    });
+
+    // ---------- show desktop nav / hide mobile on resize ----------
+    function handleResize(){
+      const desktopNav = document.getElementById('desktopNav');
+      if(window.innerWidth >= 768){
+        desktopNav.style.display = 'flex';
+        menuBtn.style.display = 'none';
+        // ensure mobile menu hidden
+        gsap.set(mobileMenu, { display: 'none' });
+        mobileMenu.setAttribute('aria-hidden','true');
+      } else {
+        desktopNav.style.display = 'none';
+        menuBtn.style.display = 'block';
+      }
+    }
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    // ---------- sticky header shrink on scroll ----------
+    const header = document.getElementById('site-header') || document.querySelector('header');
+    window.addEventListener('scroll', () => {
+      if(window.scrollY > 12) header.classList.add('scrolled');
+      else header.classList.remove('scrolled');
+    });
+
+    // ---------- respect reduced-motion preference ----------
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      gsap.globalTimeline.timeScale(0.0001);
+    }
+
+    // ---------- Notes ----------
+    // - To replace partner placeholder SVGs with official logos: paste the inner <path>/<g> from official SVG into each <svg>,
+    //   keeping the <svg class="partner-svg" ...> wrapper and the <title> for accessibility.
+  </script>
+</body>
+</html>
