@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Indie Game Studio</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Google Font: Orbitron (sci-fi tech font) -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* Font family */
+    body, .navbar, .projects-title, .hero-content, footer {
+      font-family: 'Orbitron', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Navbar with scale on scroll */
+    .navbar {
+      position: fixed;
+      width: 100%;
+      background: #121212;
+      transition: all 0.3s ease;
+      z-index: 1030;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+    }
+    .navbar.scaled {
+      padding: 1.8rem 2rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+      transform-origin: top center;
+      transform: scale(1.05);
+    }
+    .navbar-brand, .nav-link {
+      color: #fff !important;
+      user-select: none;
+    }
+    .nav-link:hover {
+      color: #33cc33 !important;
+    }
+
+    /* Hamburger button */
+    #menuToggle svg rect {
+      transition: fill 0.3s ease;
+    }
+    #menuToggle:hover svg rect {
+      fill: #33cc33;
+    }
+
+    /* Hero Section with parallax */
+    .hero {
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0e0f14, #2a2b37);
+      perspective: 1000px;
+      padding: 0 1rem;
+      text-align: center;
+    }
+    .hero-content {
+      font-size: 2.5rem;
+      z-index: 10;
+      max-width: 700px;
+      user-select: none;
+    }
+    .parallax-layer {
+      position: absolute;
+      width: 120%;
+      height: 120%;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      will-change: transform;
+      top: -10%;
+      left: -10%;
+      border-radius: 12px;
+      filter: brightness(0.7);
+    }
+    .parallax-layer.bg1 {
+      background-image: url('https://images.unsplash.com/photo-1605902711622-cfb43c443f10?auto=format&fit=crop&w=1950&q=80'); /* More game-centric: futuristic neon cityscape */
+      opacity: 0.55;
+      z-index: 1;
+    }
+    .parallax-layer.bg2 {
+      background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1950&q=80'); /* Futuristic glowing grid */
+      opacity: 0.75;
+      z-index: 2;
+      top: -5%;
+    }
+
+    /* Projects Section */
+    .projects {
+      padding: 4rem 1rem;
+      background: #181818;
+      color: white;
+    }
+    .projects-title {
+      text-align: center;
+      font-size: 2.25rem;
+      margin-bottom: 2rem;
+      user-select: none;
+    }
+    .projects-row {
+      justify-content: center;
+      gap: 2rem;
+    }
+    .project-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border-radius: 1rem;
+      box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+      width: 280px;
+      height: 360px;
+      perspective: 1000px;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      flex-flow: column nowrap;
+      transition: box-shadow 0.3s ease;
+    }
+    .project-card:hover, .project-card:focus-visible {
+      box-shadow: 0 12px 48px 0 rgba(51,204,51,0.6);
+      outline: none;
+    }
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 1rem;
+      transition: transform 0.7s;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+    .project-card:hover .card-inner,
+    .project-card.touch-flip .card-inner {
+      transform: rotateX(360deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 1rem;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+    .card-front {
+      background: rgba(255, 255, 255, 0.25);
+      color: #33cc33;
+      font-weight: 700;
+      font-size: 1.3rem;
+      text-align: center;
+      text-shadow: 0 0 6px #33cc33aa;
+    }
+    .card-back {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ddd;
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.4;
+      transform: rotateX(180deg);
+      flex-direction: column;
+    }
+
+    /* Stats Ticker Section */
+    .stats-ticker {
+      background: #111;
+      color: #0f0;
+      font-family: monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      border-top: 1px solid #333;
+      border-bottom: 1px solid #333;
+      padding: 1rem 0;
+      user-select: none;
+      font-weight: bold;
+    }
+    .ticker-content {
+      display: inline-block;
+      padding-left: 100%;
+      will-change: transform;
+    }
+
+    /* Newsletter Section */
+    .newsletter {
+      background: #222;
+      color: white;
+      padding: 3rem 1rem;
+      text-align: center;
+      user-select: none;
+    }
+    .newsletter input[type="email"] {
+      max-width: 320px;
+      width: 80%;
+      border-radius: 50px;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      margin-right: 1rem;
+      font-size: 1rem;
+      outline: none;
+    }
+    .newsletter input[type="email"]:focus {
+      box-shadow: 0 0 8px #33cc33aa;
+    }
+    .newsletter button {
+      border-radius: 50px;
+      padding: 0.75rem 2.5rem;
+      font-weight: 700;
+      background: #33cc33;
+      border: none;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .newsletter button:hover {
+      background: #28a428;
+    }
+
+    /* Footer Section */
+    footer {
+      background: #121212;
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+
+    /* Offcanvas menu frosted glass */
+    #offcanvasMenu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 280px;
+      background: rgba(255 255 255 / 0.15);
+      backdrop-filter: blur(15px);
+      box-shadow: 4px 0 15px rgba(0,0,0,0.4);
+      transform: translateX(-100%);
+      z-index: 1050;
+      padding: 2rem 2rem 0 2rem;
+      display: flex;
+      flex-direction: column;
+    }
+    body.offcanvas-open {
+      overflow: hidden;
+    }
+    #offcanvasMenu ul {
+      padding-left: 0;
+      margin-top: 4rem;
+    }
+    #offcanvasMenu ul li {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+    #offcanvasMenu ul li a {
+      color: white;
+      font-weight: 600;
+      font-size: 1.25rem;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    #offcanvasMenu ul li a:hover {
+      color: #33cc33;
+    }
+    #closeMenu {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2.5rem;
+      cursor: pointer;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      user-select: none;
+      opacity: 0;
+      transform: scale(0.5);
+    }
+
+    /* Bootstrap gutters and margins */
+    .container-custom {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+
+    /* Responsive fixes */
+    @media (max-width: 768px) {
+      .hero-content {
+        font-size: 1.8rem;
+        max-width: 90vw;
+      }
+      .projects-title {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar d-flex align-items-center px-3">
+  <a class="navbar-brand fs-4" href="#">IndieGameStudio</a>
+
+  <!-- Hamburger Button visible on mobile -->
+  <button class="btn btn-link d-md-none text-white ms-auto" id="menuToggle" aria-label="Toggle menu">
+    <svg width="30" height="30" viewBox="0 0 100 80" fill="white" aria-hidden="true">
+      <rect width="100" height="15"></rect>
+      <rect y="30" width="100" height="15"></rect>
+      <rect y="60" width="100" height="15"></rect>
+    </svg>
+  </button>
+
+  <!-- Desktop nav links -->
+  <ul class="nav ms-auto d-none d-md-flex">
+    <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+    <li class="nav-item"><a class="nav-link" href="#stats">Stats</a></li>
+    <li class="nav-item"><a class="nav-link" href="#newsletter">Subscribe</a></li>
+  </ul>
+</nav>
+
+<!-- Offcanvas Menu -->
+<div id="offcanvasMenu" aria-hidden="true" role="dialog" aria-label="Mobile menu">
+  <button type="button" id="closeMenu" aria-label="Close menu">&times;</button>
+  <ul class="nav flex-column mt-4">
+    <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+    <li class="nav-item"><a class="nav-link" href="#stats">Stats</a></li>
+    <li class="nav-item"><a class="nav-link" href="#newsletter">Subscribe</a></li>
+  </ul>
+</div>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="parallax-layer bg1"></div>
+  <div class="parallax-layer bg2"></div>
+  <div class="hero-content">
+    <h1>Welcome to Our Indie Game Studio</h1>
+    <p>Innovative games with heart and soul</p>
+  </div>
+</section>
+
+<!-- Projects Section -->
+<section id="projects" class="projects container-custom">
+  <h2 class="projects-title">Our Projects</h2>
+  <div class="d-flex flex-wrap projects-row justify-content-center gx-4 gy-4">
+    <div class="project-card" tabindex="0">
+      <div class="card-inner">
+        <div class="card-front">Project A</div>
+        <div class="card-back">Description of Project A. Engaging gameplay and stunning visuals.</div>
+      </div>
+    </div>
+
+    <div class="project-card" tabindex="0">
+      <div class="card-inner">
+        <div class="card-front">Project B</div>
+        <div class="card-back">Story-driven indie adventure with immersive world-building.</div>
+      </div>
+    </div>
+
+    <div class="project-card" tabindex="0">
+      <div class="card-inner">
+        <div class="card-front">Project C</div>
+        <div class="card-back">Multiplayer chaos and creative game mechanics.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Ticker Section -->
+<section id="stats" class="stats-ticker mt-4">
+  <div class="ticker-content">
+    <span>100K+ Downloads &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 5 Awards Won &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 3 Million Playtime Hours &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 20+ Games Released &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; Community of 50K+</span>
+  </div>
+</section>
+
+<!-- Newsletter Subscribe Section -->
+<section id="newsletter" class="newsletter mt-5">
+  <h2>Subscribe to Our Newsletter</h2>
+  <p>Get the latest news and game releases directly in your inbox.</p>
+  <form class="d-flex justify-content-center flex-wrap gap-2" onsubmit="subscribeNewsletter(event)" novalidate>
+    <input type="email" placeholder="Your email address" required aria-label="Email address" />
+    <button type="submit">Subscribe</button>
+  </form>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>&copy; 2025 Indie Game Studio. All rights reserved.</p>
+</footer>
+
+<script>
+  // GSAP Navbar Scale on Scroll
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.create({
+    start: 0,
+    onUpdate: (self) => {
+      const nav = document.querySelector('.navbar');
+      if (self.scrollY > 10) {
+        nav.classList.add('scaled');
+      } else {
+        nav.classList.remove('scaled');
+      }
+    }
+  });
+
+  // GSAP Parallax Hero
+  const bg1 = document.querySelector('.parallax-layer.bg1');
+  const bg2 = document.querySelector('.parallax-layer.bg2');
+
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    gsap.to(bg1, { y: scrollY * 0.2, ease: "power1.out", overwrite: 'auto' });
+    gsap.to(bg2, { y: scrollY * 0.4, ease: "power1.out", overwrite: 'auto' });
+  });
+
+  // Project card flip on touch for accessibility
+  document.querySelectorAll('.project-card').forEach(card => {
+    card.addEventListener('touchstart', () => {
+      card.classList.toggle('touch-flip');
+    });
+  });
+
+  // Scrolling ticker animation using GSAP timeline
+  const ticker = document.querySelector('.ticker-content');
+  const tickerWidth = ticker.offsetWidth;
+
+  gsap.to(ticker, {
+    x: `-${tickerWidth}px`,
+    duration: 30,
+    repeat: -1,
+    ease: 'linear'
+  });
+
+  // Newsletter subscribe placeholder function
+  function subscribeNewsletter(event) {
+    event.preventDefault();
+    const email = event.target.querySelector('input[type=email]').value;
+    alert('Subscribed with email: ' + email);
+  }
+
+  // Offcanvas Menu Animation with GSAP
+  const menuToggle = document.getElementById('menuToggle');
+  const offcanvasMenu = document.getElementById('offcanvasMenu');
+  const closeMenu = document.getElementById('closeMenu');
+
+  let menuOpen = false;
+
+  const openMenu = () => {
+    gsap.to(offcanvasMenu, { x: 0, duration: 0.5, ease: 'power3.out' });
+    gsap.fromTo(closeMenu, { autoAlpha: 0, scale: 0.5 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' });
+    document.body.classList.add('offcanvas-open');
+    offcanvasMenu.setAttribute('aria-hidden', 'false');
+    menuOpen = true;
+  };
+
+  const closeMenuFunc = () => {
+    gsap.to(offcanvasMenu, { x: '-100%', duration: 0.5, ease: 'power3.in' });
+    gsap.to(closeMenu, { autoAlpha: 0, scale: 0.5, duration: 0.3 });
+    document.body.classList.remove('offcanvas-open');
+    offcanvasMenu.setAttribute('aria-hidden', 'true');
+    menuOpen = false;
+  };
+
+  menuToggle.addEventListener('click', () => {
+    if (!menuOpen) {
+      openMenu();
+    } else {
+      closeMenuFunc();
+    }
+  });
+  closeMenu.addEventListener('click', closeMenuFunc);
+
+  // Close offcanvas menu if navigation link clicked (mobile)
+  offcanvasMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeMenuFunc);
+  });
+</script>
+
+<!-- Bootstrap 5 Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
